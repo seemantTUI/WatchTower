@@ -1,8 +1,11 @@
-const Notifications = require('../models/notificationModel')
+const Notification = require('../models/notificationModel');
 
-const getNotifications = async (req, res) =>{
+const getNotifications = async (req, res) => {
     try {
-        const notifications = await Notification.find({}).sort({createdAt: -1})
+        // Populate the associated rule
+        const notifications = await Notification.find({})
+            .populate('ruleId', 'ruleName') // Populate only the `ruleName` field of the associated rule
+            .sort({ createdAt: -1 });
         const count = notifications.length;
 
         res.status(200).json({
@@ -16,4 +19,4 @@ const getNotifications = async (req, res) =>{
     }
 };
 
-module.exports = {getNotifications};
+module.exports = { getNotifications };

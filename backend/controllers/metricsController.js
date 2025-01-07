@@ -8,7 +8,7 @@ const getMetrics = async (req, res) =>{
         const count = metrics.length;
 
         res.status(200).json({
-            rules: {
+            metrics: {
                 count,
                 items: metrics,
             },
@@ -148,7 +148,9 @@ const deleteMetrics = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
+    
 };
+
 
 module.exports = {
     getMetrics,

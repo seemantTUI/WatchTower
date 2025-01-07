@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const Schema = mongoose.Schema;
 
 const RuleSchema = new Schema({
@@ -8,10 +7,6 @@ const RuleSchema = new Schema({
         required: true,
     },
     ruleDescription: {
-        type: String,
-        required: true,
-    },
-    metricName: {
         type: String,
         required: true,
     },
@@ -28,6 +23,18 @@ const RuleSchema = new Schema({
         type: String,
         enum: ['email', 'sms', 'webhook'],
         required: true,
+    },
+    metric: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Metric',
+        required: true,
+    },
+    alertMessage: {
+        type: String,
+        required: false,
+        default: function () {
+            return `Alert! ${this.ruleName} has been breached.`;
+        },
     },
 }, { timestamps: true });
 

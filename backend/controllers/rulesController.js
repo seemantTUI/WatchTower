@@ -4,12 +4,13 @@ const mongoose = require('mongoose')
 
 const getRules = async (req, res) => {
     try {
-        const rules = await Rule.find({}).sort({ createdAt: -1 });
-        const count = rules.length;
+        const rules = await Rule.find({})
+            .populate('metric', 'metricName') // Populate metricName
+            .sort({ createdAt: -1 });
 
         res.status(200).json({
             rules: {
-                count,
+                count: rules.length,
                 items: rules,
             },
         });
@@ -18,41 +19,48 @@ const getRules = async (req, res) => {
     }
 };
 
-const getRule = async(req, res) => {
-    const { id } = req.params
-    if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({ error: `Rule with ${id} does not exist` });
+// Get a specific rule by ID
+const getRule = async (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ error: `Rule with ID ${id} does not exist` });
     }
-    const rule = await Rule.findById(id)
-    if(!rule)   {
-        return res.status(404).json({ error: `Rule with ${id} does not exist` });
+
+    try {
+        const rule = await Rule.findById(id).populate('metric', 'metricName');
+        if (!rule) {
+            return res.status(404).json({ error: `Rule with ID ${id} does not exist` });
+        }
+
+        res.status(200).json(rule);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
- 
-    res.status(200).json(rule);
 };
 
 const createRule = async (req, res) => {
     const { ruleName, 
             ruleDescription, 
-            metricName, 
+            metric, 
             condition, 
             threshold, 
             notificationChannel} = req.body
             
     let missingFields = []
     if(!ruleName){ missingFields.push(ruleName)}
-    if(!ruleDescription){ missingFields.push(ruleName)}
-    if(!metricName){missingFields.push(ruleName)}
-    if(!condition){missingFields.push(ruleName)}
-    if(!threshold){missingFields.push(ruleName)}
-    if(!notificationChannel){missingFields.push(ruleName)}
+    if(!ruleDescription){ missingFields.push(ruleDescription)}
+    if(!metric){missingFields.push(metric)}
+    if(!condition){missingFields.push(condition)}
+    if(!threshold){missingFields.push(threshold)}
+    if(!notificationChannel){missingFields.push(notificationChannel)}
     if(missingFields.length > 0)    {
         return req.status(400).json ({error: 'Please fill in all the fields', emptyFields })
     }
     try {
         const rule  =  await Rule.create({ruleName, 
             ruleDescription, 
-            metricName, 
+            metric, 
             condition, 
             threshold, 
             notificationChannel})
@@ -75,12 +83,12 @@ const createRules = async (req, res) => {
 
     // Validate each rule in the array
     rules.forEach((rule, index) => {
-        const { ruleName, ruleDescription, metricName, condition, threshold, notificationChannel } = rule;
+        const { ruleName, ruleDescription, metric, condition, threshold, notificationChannel } = rule;
         const missingFields = [];
 
         if (!ruleName) missingFields.push('ruleName');
         if (!ruleDescription) missingFields.push('ruleDescription');
-        if (!metricName) missingFields.push('metricName');
+        if (!metric) missingFields.push('metric');
         if (!condition) missingFields.push('condition');
         if (!threshold) missingFields.push('threshold');
         if (!notificationChannel) missingFields.push('notificationChannel');
@@ -140,8 +148,6 @@ const deleteRule = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
-    
-    
 };
 
 const deleteRules = async (req, res) => {

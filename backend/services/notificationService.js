@@ -5,7 +5,7 @@ const twilio = require('twilio');
 
 // Trigger Notifications
 const triggerNotification = (rule, value) => {
-    const message = `Alert! ${rule.metricName} breached threshold with value ${value}.`;
+    const message = rule.alertMessage || `Alert! ${rule.metricName} breached threshold with value ${value}.`;
   
     if (rule.notificationChannel === 'email') {
         //  sendEmailNotification(rule.userId, message);
