@@ -1,52 +1,76 @@
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+
 const NavBar = () => {
+  const location = useLocation();
+
+  // Determine current page title
+  const getPageTitle = (pathname) => {
+    if (pathname === '/' || pathname === '/home') return 'Home';
+    if (pathname.includes('/rules')) return 'Rules';
+    if (pathname.includes('/metrics')) return 'Metrics';
+    if (pathname.includes('/notifications')) return 'Notifications';
+    if (pathname.includes('/profile')) return 'Profile';
+    if (pathname.includes('/login')) return 'Login';
+    if (pathname.includes('/register')) return 'Register';
+    return 'Watch Tower';
+  };
+
+  const pageTitle = getPageTitle(location.pathname);
+
   return (
-    <div className="nav-bar">
-      <nav className="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="/">
-            <i className="bi bi-shield-lock-fill me-2"></i> Watch Tower
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="/">
-                  <i className="bi bi-house-fill me-2"></i> Home
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/rules">
-                  <i className="bi bi-list-task me-2"></i> Rules
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/metrics">
-                  <i className="bi bi-bar-chart-fill me-2"></i> Metrics
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/notifications">
-                  <i className="bi bi-bell-fill me-2"></i> Notifications
-                </a>
-              </li>
-            </ul>
-            <span className="navbar-text">
-              <i className="bi bi-person-circle me-2"></i> User Profile
-            </span>
+      <div className="nav-bar">
+        <nav className="navbar bg-light shadow-sm px-3 py-2" style={{ minHeight: '48px' }}>
+          <div className="container-fluid d-flex justify-content-between align-items-center">
+
+            {/* Left: Page Title */}
+            <span className="fw-semibold text-muted">{pageTitle}</span>
+
+            {/* Right: Theme Toggle */}
+            <div className="dropdown">
+              <button
+                  className="btn btn-sm btn-dark dropdown-toggle d-flex align-items-center"
+                  id="bd-theme"
+                  type="button"
+                  aria-expanded="false"
+                  data-bs-toggle="dropdown"
+                  aria-label="Toggle theme (auto)"
+              >
+                <svg className="bi theme-icon-active" width="1em" height="1em">
+                  <use href="#circle-half"></use>
+                </svg>
+                <span className="visually-hidden" id="bd-theme-text">Toggle theme</span>
+              </button>
+              <ul className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
+                <li>
+                  <button type="button" className="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+                    <svg className="bi me-2 opacity-50" width="1em" height="1em">
+                      <use href="#sun-fill"></use>
+                    </svg>
+                    Light
+                  </button>
+                </li>
+                <li>
+                  <button type="button" className="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+                    <svg className="bi me-2 opacity-50" width="1em" height="1em">
+                      <use href="#moon-stars-fill"></use>
+                    </svg>
+                    Dark
+                  </button>
+                </li>
+                <li>
+                  <button type="button" className="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
+                    <svg className="bi me-2 opacity-50" width="1em" height="1em">
+                      <use href="#circle-half"></use>
+                    </svg>
+                    Auto
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
-      </nav>
-    </div>
+        </nav>
+      </div>
   );
 };
 

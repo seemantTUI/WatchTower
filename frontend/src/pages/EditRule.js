@@ -7,7 +7,11 @@ const EditRules = () => {
             const { id } = useParams()
                 useEffect(() => {
                     const fetchRule = async () => {
-                    const response = await fetch('http://localhost:4000/api/v1/rules/'+id)
+                    const response = await fetch('http://localhost:4000/api/v1/rules/'+id,{
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        },
+                    })
                     const json = await response.json()
                 
                     if (response.ok) {

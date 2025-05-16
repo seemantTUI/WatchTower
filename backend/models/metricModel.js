@@ -10,7 +10,7 @@ const MetricSchema = new Schema({
     value : {
         type: Number,
         required: true
-    }
+    },
 },{timestamps: true})
 
 module.exports = mongoose.model('Metric', MetricSchema);

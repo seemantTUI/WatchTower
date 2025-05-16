@@ -1,52 +1,85 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import React from 'react';
+
 const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
   return (
-    <div
-      className={`sidebar bg-dark text-light vh-100 p-3 ${isCollapsed ? 'collapsed' : ''}`}
-      style={{
-        width: isCollapsed ? '80px' : '250px',
-        transition: 'width 0.3s',
-        position: 'fixed',
-      }}
-    >
-      <button
-        onClick={toggleCollapse}
-        className="btn btn-light btn-sm mb-3"
-        style={{ width: '100%' }}
+      <div
+          className="d-flex flex-column flex-shrink-0 p-3 text-bg-dark"
+          style={{ width: '250px', minHeight: '100%' }}
       >
-        {isCollapsed ? '>' : '<'}
-      </button>
-      <h4 className={`${isCollapsed ? 'd-none' : ''} text-primary`}>Menu</h4>
-      <ul className="nav flex-column">
-        <li className="nav-item mb-2">
-          <Link to="/" className="nav-link text-light">
-            <i className="bi bi-house"></i> {!isCollapsed && 'Dashboard'}
-          </Link>
-        </li>
-        <li className="nav-item mb-2">
-          <Link to="/rules" className="nav-link text-light">
-            <i className="bi bi-card-list"></i> {!isCollapsed && 'Rules'}
-          </Link>
-        </li>
-        <li className="nav-item mb-2">
-          <Link to="/metrics" className="nav-link text-light">
-            <i className="bi bi-bar-chart"></i> {!isCollapsed && 'Metrics'}
-          </Link>
-        </li>
-        <li className="nav-item mb-2">
-          <Link to="/notifications" className="nav-link text-light">
-            <i className="bi bi-bell"></i> {!isCollapsed && 'Notifications'}
-          </Link>
-        </li>
-      </ul>
-    </div>
+        <div className="d-flex align-items-center mb-3">
+          <img
+              src="/logo.png"
+              alt="Watch Tower"
+              width="40"
+              height="40"
+              className="me-2"
+          />
+          <span className="fs-4 fw-bold text-white">Watch Tower</span>
+        </div>
+
+        <hr />
+        <ul className="nav nav-pills flex-column mb-auto">
+          <li className="nav-item">
+            <Link to="/" className="nav-link text-white">
+              <i className="bi bi-house me-2" />
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to="/rules" className="nav-link text-white">
+              <i className="bi bi-list-task me-2" />
+              Rules
+            </Link>
+          </li>
+          <li>
+            <Link to="/metrics" className="nav-link text-white">
+              <i className="bi bi-bar-chart me-2" />
+              Metrics
+            </Link>
+          </li>
+          <li>
+            <Link to="/notifications" className="nav-link text-white">
+              <i className="bi bi-bell me-2" />
+              Notifications
+            </Link>
+          </li>
+        </ul>
+
+        <hr />
+        <div className="dropdown">
+          <a
+              href="#"
+              className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+          >
+            <img
+                src="https://github.com/mdo.png"
+                alt="avatar"
+                width="32"
+                height="32"
+                className="rounded-circle me-2"
+            />
+            <strong>Seemant</strong>
+          </a>
+          <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
+            <li>
+              <Link className="dropdown-item" to="/profile">
+                Profile
+              </Link>
+            </li>
+            <li>
+              <hr className="dropdown-divider" />
+            </li>
+            <li>
+              <Link className="dropdown-item" to="/login">
+                Logout
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
   );
 };
 

@@ -3,7 +3,7 @@ const Notification = require('../models/notificationModel');
 const getNotifications = async (req, res) => {
     try {
         // Populate the associated rule
-        const notifications = await Notification.find({})
+        const notifications = await Notification.find({user: req.user._id})
             .populate('ruleId', 'ruleName') // Populate only the `ruleName` field of the associated rule
             .sort({ createdAt: -1 });
         const count = notifications.length;

@@ -13,7 +13,11 @@ const AddMetric = ({ metricName = '', value = '' }) => {
       // Fetch the existing metric data
       const fetchMetric = async () => {
         try {
-          const response = await fetch(`http://localhost:4000/api/v1/metrics/${id}`);
+          const response = await fetch(`http://localhost:4000/api/v1/metrics/${id}`,{
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            },
+          });
           if (response.ok) {
             const data = await response.json();
             setMetricName(data.metricName || '');
@@ -46,6 +50,7 @@ const AddMetric = ({ metricName = '', value = '' }) => {
         method: method,
         headers: {
           'Content-Type': 'application/json',
+           Authorization: `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify(metricData),
       });
@@ -66,7 +71,7 @@ const AddMetric = ({ metricName = '', value = '' }) => {
   };
 
   return (
-    <div className="metric-form container">
+      <div className="metric-form container">
       <div className="row justify-content-left">
       <div className="col-md-4">
       <form onSubmit={handleSubmit}>

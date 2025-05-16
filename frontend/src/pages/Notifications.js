@@ -9,7 +9,11 @@ const Notifications = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/v1/notifications/');
+        const response = await fetch('http://localhost:4000/api/v1/notifications/',{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+        });
         if (response.ok) {
           const json = await response.json();
           setNotifications(json.notifications.items);
@@ -58,7 +62,6 @@ const Notifications = () => {
   return (
     <div className="display-notifications container">
       <div className="d-flex justify-content-between align-items-center my-3">
-        <h2>Notifications</h2>
         <button
           className="btn btn-primary"
           onClick={() => navigate('/notifications/create')}

@@ -2,49 +2,71 @@ const axios = require('axios');
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 
+const triggerNotification = async (rule, value) => {
+    const user = rule.user;
 
-// Trigger Notifications
-const triggerNotification = (rule, value) => {
-    const message = rule.alertMessage || `Alert! ${rule.metricName} breached threshold with value ${value}.`;
-  
-    if (rule.notificationChannel === 'email') {
-        //  sendEmailNotification(rule.userId, message);
-    } else 
-    if (rule.notificationChannel === 'sms') {
-      sendSMSNotification(rule.userId, message);
-      
-     } else if (rule.notificationChannel === 'webhook') {
-       //sendWebhookNotification(rule.userId, message);
-     }
-  };
-  
-//   const sendEmailNotification = (email, message) => {
-//     const transporter = nodemailer.createTransport({
-//       service: 'gmail',
-//       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-//     });
-  
-//     transporter.sendMail({
-//       from: process.env.EMAIL_USER,
-//       to: email,
-//       subject: 'Alert Notification',
-//       text: message,
-//     });
-//   };
-  
-  const sendSMSNotification = (phone, message) => {
+    if (!user) {
+        console.warn(`No user info available for rule: ${rule.ruleName}`);
+        return;
+    }
+
+    const message = rule.alertMessage || `Alert! ${rule.metric.metricName} breached threshold with value ${value}.`;
+
+    try {
+        switch (user.notificationChannel) {
+            case 'email':
+                if (user.email) await sendEmailNotification(user.email, message);
+                break;
+
+            case 'sms':
+                if (user.phone) await sendSMSNotification(user.phone, message);
+                break;
+
+            case 'webhook':
+                if (user.webhookUrl) await sendWebhookNotification(user.webhookUrl, message);
+                break;
+
+            default:
+                console.warn(`Unknown notification channel: ${rule.notificationChannel}`);
+        }
+    } catch (err) {
+        console.error(`Failed to send ${rule.notificationChannel} notification:`, err.message);
+    }
+};
+
+const sendEmailNotification = async (email, message) => {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        },
+    });
+
+    await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Alert Notification',
+        text: message,
+    });
+
+    console.log(`📧 Email sent to ${email}`);
+};
+
+const sendSMSNotification = async (phone, message) => {
     const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH);
-    client.messages.create({
+    await client.messages.create({
         body: message,
         from: process.env.TWILIO_PHONE,
-        to: "+4915236129849",
-      });
-    
-      console.log(message.body);
-};
-  
-//   const sendWebhookNotification = (webhookUrl, message) => {
-//     axios.post(webhookUrl, { message });
-//   };
+        to: phone,
+    });
 
-module.exports = {triggerNotification};
+    console.log(`📱 SMS sent to ${phone}`);
+};
+
+const sendWebhookNotification = async (webhookUrl, message) => {
+    await axios.post(webhookUrl, { message });
+    console.log(`🌐 Webhook triggered at ${webhookUrl}`);
+};
+
+module.exports = { triggerNotification };

@@ -9,6 +9,10 @@ const notificationRoutes = require('./routes/notifications');
 const { evaluateRules } = require('./services/alertEngine');
 const webhooksRoutes = require('./routes/webhooks');
 const fetchWeatherData  = require('./services/fetchMetricService');
+const authRoutes = require('./routes/auth');
+const protect = require('./middleware/authMiddleware');
+const googleRoutes = require('./routes/googleauth');
+
 
 
 
@@ -21,11 +25,14 @@ app.use((req, res, next) => {
     next()
   })
 
-app.use('/api/v1/rules', rulesRoutes);
-app.use('/api/v1/metrics', metricRoutes);
-app.use('/api/v1/notifications', notificationRoutes);
-app.use('/webhooks', webhooksRoutes);
+app.use('/api/v1/rules', protect, rulesRoutes);
+app.use('/api/v1/metrics', protect, metricRoutes);
+app.use('/api/v1/notifications', protect, notificationRoutes);
+app.use('/webhooks', protect, webhooksRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/google', googleRoutes);
 
+require('./utils/swagger')(app);
 
 setInterval(() => {
   fetchWeatherData();

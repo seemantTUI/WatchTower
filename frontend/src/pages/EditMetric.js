@@ -9,7 +9,11 @@ const EditMetric = () => {
   useEffect(() => {
     const fetchMetric = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/api/v1/metrics/${id}`);
+        const response = await fetch(`http://localhost:4000/api/v1/metrics/${id}`,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+        });
         const json = await response.json();
 
         if (response.ok) {

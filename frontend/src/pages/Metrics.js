@@ -9,7 +9,11 @@ const Metrics = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/v1/metrics/');
+        const response = await fetch('http://localhost:4000/api/v1/metrics/',{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+        });
         if (response.ok) {
           const json = await response.json(); // Parse JSON
           setMetrics(json.metrics.items); // Access the `items` array
@@ -54,6 +58,9 @@ const Metrics = () => {
     try {
       const response = await fetch(`http://localhost:4000/api/v1/metrics/${id}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
       });
 
       if (response.ok) {
@@ -72,7 +79,6 @@ const Metrics = () => {
   return (
     <div className="display-metrics container">
       <div className="d-flex justify-content-between align-items-center my-3">
-        <h2>Metrics</h2>
         <button
           className="btn btn-primary"
           onClick={() => navigate('/metrics/create')}
